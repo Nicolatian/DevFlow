@@ -1,0 +1,15 @@
+<div class="portfolio-container">
+  <h1>Selected Work</h1>
+  
+  <div class="card-viewer">
+    @for (project of projects; track project.title) {
+      <div class="project-card" [style.border-left-color]="project.color">
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.desc }}</p>
+        <div class="stats">Clicks: {{ project.clicks }}</div>
+        <button class="view-btn" (click)="trackClick(project._id)">View Details</button>
+        <img [src]="project.imageUrl" alt="Project Image" class="project-img">
+      </div>
+    }
+  </div>
+</div>

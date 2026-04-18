@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Angular specific
+.angular/
+dist/
+.vscode/
+
+# Environment and Logs
+.env
+*.log
+npm-debug.log*
+
+# OS specific
+.DS_Store
+Thumbs.db

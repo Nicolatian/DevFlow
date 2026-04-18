@@ -1,0 +1,38 @@
+.card-viewer {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px;
+  scroll-snap-type: x mandatory; 
+}
+
+.project-card {
+  min-width: 300px;
+  height: 400px;
+  background: white;
+  border-radius: 15px;
+  border-left: 10px solid;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.view-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.project-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover; 
+  border-radius: 8px;
+  margin-bottom: 15px;
+}

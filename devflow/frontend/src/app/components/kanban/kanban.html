@@ -1,0 +1,25 @@
+<div class="admin-container">
+  <h2>{{ editingProject ? '✏️ Edit Project' : '🚀 Add New Project' }}</h2>
+  
+  <form (submit)="submitProject($event, title.value, desc.value, imgUrl.value)">
+    <input #title type="text" [value]="editingProject?.title || ''" placeholder="Project Title" required>
+    <textarea #desc [value]="editingProject?.desc || ''" placeholder="Description"></textarea>
+    <input #imgUrl type="text" [value]="editingProject?.imageUrl || ''" placeholder="Image URL">
+    
+    <button type="submit">{{ editingProject ? 'Save Changes' : 'Create Project' }}</button>
+    <button type="button" *ngIf="editingProject" (click)="cancelEdit()">Cancel</button>
+  </form>
+</div>
+
+<div class="kanban-list">
+  <h3>Existing Projects</h3>
+  @for (project of projects; track project._id) { 
+    <div class="kanban-card">
+      <h4>{{ project.title }}</h4>
+      <div class="actions">
+        <button class="edit-btn" (click)="editProject(project)">✏️</button>
+        <button class="delete-btn" (click)="removeProject(project._id)">🗑️</button>
+      </div>
+    </div>
+  }
+</div>

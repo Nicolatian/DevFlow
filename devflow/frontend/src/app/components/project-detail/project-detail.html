@@ -1,0 +1,21 @@
+<div class="detail-container" *ngIf="project">
+  <div class="navigation">
+    <button (click)="goBack()" class="back-btn">← Back to Portfolio</button>
+  </div>
+  
+  <header class="project-header" [style.border-bottom-color]="project.color">
+    <h1>{{ project.title }}</h1>
+    <span class="view-count"> {{ project.clicks }} Views</span>
+  </header>
+
+  <main class="project-content">
+    <div class="image-wrapper">
+      <img [src]="project.imageUrl" [alt]="project.title" class="main-img">
+    </div>
+    
+    <div class="text-wrapper">
+      <h3>About this project</h3>
+      <p class="description">{{ project.desc }}</p>
+    </div>
+  </main>
+</div>

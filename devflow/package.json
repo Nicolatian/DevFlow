@@ -1,0 +1,9 @@
+{
+  "scripts": {
+  "dev": "concurrently \"npm start --prefix backend\" \"cd frontend && ng serve\""
+    },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
+
