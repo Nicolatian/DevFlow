@@ -27,7 +27,7 @@ const projectSchema = new mongoose.Schema({
 
 const Project = mongoose.model('Project', projectSchema);
 
-// This adds two projects to your database if it is currently empty I WANT THIS TO BE ADDED
+// This adds two projects to your database if it is currently empty 
 async function seedDatabase() {
   try {
     const count = await Project.countDocuments();
