@@ -23,15 +23,22 @@ export class ProjectDetail implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.projectService.getProjectById(id).subscribe((data) => {
+  const id = this.route.snapshot.paramMap.get('id');
+  console.log('ID from URL:', id); // Check if this is null!
+
+  if (id) {
+    this.projectService.getProjectById(id).subscribe({
+      next: (data) => {
+        console.log('Project loaded:', data);
         this.project = data;
-        // Ensure tasks exists so the board doesn't crash
         if (!this.project.tasks) this.project.tasks = [];
-      });
-    }
+      },
+      error: (err) => console.error('Failed to load project details:', err)
+    });
+  } else {
+    console.error('No ID found in the URL path!');
   }
+}
 
   // Handle Drag & Drop reordering
   drop(event: CdkDragDrop<string[]>) {

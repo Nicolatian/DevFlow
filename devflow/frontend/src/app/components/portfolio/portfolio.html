@@ -1,10 +1,11 @@
 <nav class="main-nav">
-  <div class="logo">
-    <img src="favicon.ico" alt="Logo"> </div>
+  <a routerLink="/" class="logo">
+    <img src="favicon.ico" alt="NV">
+  </a>
   <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="/about">About Me</a></li>
-    <li><a href="/work" class="active">Works</a></li>
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+    <li><a routerLink="/portfolio" routerLinkActive="active">Work</a></li>
+    <li><a routerLink="/kanban" routerLinkActive="active">Admin</a></li>
     <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -12,66 +13,129 @@
 
 <section class="hero">
   <h1>Selected Work</h1>
-  <p>A selection of projects I've worked on — where code meets design.</p>
+  <p>Where code meets design and ideas become meaningful solutions.</p>
 </section>
 
 <div class="portfolio-container">
-  <div class="scroll-track-wrap">
-    <div class="card-viewer" #cardViewer (scroll)="onScroll()">
-      @for (project of projects; track project._id) {
-        <div class="project-card">
-          <div class="project-img-container">
-            <img [src]="project.imageUrl" class="project-img-big">
+  <button class="side-arrow left" (click)="scroll(-1)" [disabled]="currentIndex === 0">〈</button>
+  <button class="side-arrow right" (click)="scroll(1)" [disabled]="currentIndex === projects.length - 1">〉</button>
+
+  <div class="card-viewer" #cardViewer (scroll)="onScroll()">
+    @for (project of projects; track project._id) {
+      <div class="project-card" [style.border-top]="'3px solid ' + (project.color || '#6FAF8F')">
+        
+        <div class="project-img-wrap">
+          <img [src]="project.imageUrl || 'assets/placeholder.jpg'" class="project-img" alt="{{project.title}}">
+        </div>
+
+        <div class="card-content">
+          <div class="stats-row">
+            <span class="click-count">Clicks: {{ project.clicks || 0 }}</span>
           </div>
-          
-          <div class="card-content">
-            <div class="meta-grid">
-              <div class="meta-item"><span>Year:</span> {{ project.year || '2024' }}</div>
-              <div class="meta-item"><span>By:</span> Me</div>
-              <div class="meta-item"><span>Role:</span> {{ project.role || 'Developer' }}</div>
-            </div>
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.desc }}</p>
 
-            <h3>{{ project.title }}</h3>
-            <p>{{ project.desc }}</p>
-
-            <div class="card-actions">
-              <button class="view-btn" (click)="trackClick(project._id)">View Details</button>
-              <a [href]="project.githubUrl" class="github-btn" target="_blank">GitHub</a>
-            </div>
+          <div class="card-btns">
+            <button class="primary-btn" (click)="trackClick(project._id)">
+              View Details →
+            </button>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    } @empty {
+      <div class="no-projects">
+        <p>No projects found. Log in to the Kanban board to add some!</p>
+      </div>
+    }
   </div>
+</div>
 
-  <div class="scroll-nav">
-    <button class="scroll-btn" (click)="scroll(-1)">←</button>
-    <div class="scroll-dots">
-      @for (p of projects; track p._id; let i = $index) {
-        <div class="dot" [class.active]="i === currentIndex"></div>
-      }
-    </div>
-    <button class="scroll-btn" (click)="scroll(1)">→</button>
+<div class="dots-row-container">
+  <div class="dots-row">
+    @for (p of projects; track p._id; let i = $index) {
+      <div class="dot" [class.active]="i === currentIndex" (click)="scroll(i - currentIndex)"></div>
+    }
   </div>
 </div>
 
 <section id="skills" class="skills-section">
-  <h2>Skills</h2>
-  <div class="skills-grid">
-    <span class="skill-tag">Angular</span>
-    <span class="skill-tag">TypeScript</span>
-    <span class="skill-tag">Node.js</span>
-    <span class="skill-tag">MongoDB</span>
-    <span class="skill-tag">UI/UX Design</span>
-    <span class="skill-tag">Three.js</span>
+  <h2>Technical Skills</h2>
+
+  <!-- Programming -->
+  <div class="skill-category">
+    <h3>Programming & Development</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/csharp/F5F5F4"><span>C#</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/kotlin/F5F5F4"><span>Kotlin</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/javascript/F5F5F4"><span>JavaScript</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/python/F5F5F4"><span>Python</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/php/F5F5F4"><span>PHP</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/r/F5F5F4"><span>R</span></div>
+    </div>
+  </div>
+
+  <!-- Web -->
+  <div class="skill-category">
+    <h3>Web & Frameworks</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/html5/F5F5F4"><span>HTML5</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/css3/F5F5F4"><span>CSS3</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/angular/F5F5F4"><span>Angular</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/javascript/F5F5F4"><span>AJAX</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/json/F5F5F4"><span>JSON</span></div>
+    </div>
+  </div>
+
+  <!-- Backend -->
+  <div class="skill-category">
+    <h3>Backend & Databases</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/mysql/F5F5F4"><span>MySQL</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/mongodb/F5F5F4"><span>MongoDB</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/express/F5F5F4"><span>Express</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/angular/6FAF8F"><span>MEAN Stack</span></div>
+    </div>
+  </div>
+
+  <!-- AI -->
+  <div class="skill-category">
+    <h3>AI & Data</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/python/F5F5F4"><span>CNN</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/opencv/F5F5F4"><span>Image Processing</span></div>
+    </div>
+  </div>
+
+  <!-- Design -->
+  <div class="skill-category">
+    <h3>UI/UX & Design</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/figma/F5F5F4"><span>Figma</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/adobexd/F5F5F4"><span>Adobe XD</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/adobeillustrator/F5F5F4"><span>Illustrator</span></div>
+      <div class="skill-tile"><span>UI/UX Design</span></div>
+      <div class="skill-tile"><span>Prototyping</span></div>
+      <div class="skill-tile"><span>HCI</span></div>
+      <div class="skill-tile"><span>Usability Testing</span></div>
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="skill-category">
+    <h3>Tools & Software</h3>
+    <div class="skills-grid">
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/github/F5F5F4"><span>GitHub</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/unity/F5F5F4"><span>Unity</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/blender/F5F5F4"><span>Blender</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/microsoft/F5F5F4"><span>Excel</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/miro/F5F5F4"><span>Miro</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/nvivo/F5F5F4"><span>NVivo</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/rstudio/F5F5F4"><span>RStudio</span></div>
+      <div class="skill-tile"><img src="https://cdn.simpleicons.org/aseprite/F5F5F4"><span>Aseprite</span></div>
+    </div>
   </div>
 </section>
 
-<footer id="contact" class="contact-footer">
-  <h2>Get in touch</h2>
-  <div class="contact-links">
-    <a href="mailto:your@email.com">Email</a>
-    <a href="https://github.com" target="_blank">GitHub</a>
-    <a href="https://linkedin.com" target="_blank">LinkedIn</a>
-  </div>
+<footer id="contact">
+  <p>2026 - Designed by Me & Built by Me</p>
 </footer>

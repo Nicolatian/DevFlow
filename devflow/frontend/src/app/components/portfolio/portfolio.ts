@@ -1,19 +1,21 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'; // Add ViewChild, ElementRef
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ProjectService } from '../../services/project'; 
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-portfolio',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './portfolio.html',
   styleUrl: './portfolio.css',
 })
 export class PortfolioComponent implements OnInit {
-  @ViewChild('cardViewer') viewer!: ElementRef; // This grabs the scroll container
+  @ViewChild('cardViewer') viewer!: ElementRef; 
+
   projects: any[] = [];
-  currentIndex = 0; // Keeps track of which dot is active
+  currentIndex = 0; 
+  readonly CARD_WIDTH = 460; // 420px card + 40px gap
 
   constructor(private projectService: ProjectService, private router: Router) {}
 
@@ -27,24 +29,28 @@ export class PortfolioComponent implements OnInit {
     });
   }
 
-  // Navigation Logic
   scroll(direction: number) {
-    const cardWidth = 340 + 24; // Width of card + gap
-    this.viewer.nativeElement.scrollBy({
-      left: direction * cardWidth,
-      behavior: 'smooth'
-    });
+    const targetIndex = this.currentIndex + direction;
+    if (targetIndex >= 0 && targetIndex < this.projects.length) {
+      this.currentIndex = targetIndex;
+      this.viewer.nativeElement.scrollTo({
+        left: targetIndex * this.CARD_WIDTH,
+        behavior: 'smooth'
+      });
+    }
   }
 
   onScroll() {
-    const cardWidth = 340 + 24;
-    this.currentIndex = Math.round(this.viewer.nativeElement.scrollLeft / cardWidth);
+    const scrollPosition = this.viewer.nativeElement.scrollLeft;
+    const newIndex = Math.round(scrollPosition / this.CARD_WIDTH);
+    if (this.currentIndex !== newIndex) {
+      this.currentIndex = newIndex;
+    }
   }
 
   trackClick(id: string) {
     this.projectService.incrementClick(id).subscribe(() => {
-      this.loadProjects();
-      this.router.navigate(['/portfolio', id]);
+      this.router.navigate(['/portfolio', id]); 
     });
   }
 }

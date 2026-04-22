@@ -1,27 +1,98 @@
-<button (click)="logout()" style="float: right; background: red; color: white;">Logout</button>
+<nav class="main-nav">
+  <div class="logo">
+    <img src="favicon.ico" alt="Logo" onerror="this.style.background='#3a3937';this.removeAttribute('src')" />
+    <span class="logo-wordmark">NV</span>
+  </div>
+  <div class="nav-admin-info">
+    <span>Admin Dashboard</span>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</nav>
 
 <div class="admin-container">
-  <h2>{{ editingProject ? '✏️ Edit Project' : '🚀 Add New Project' }}</h2>
-  
-  <form (submit)="submitProject($event, title.value, desc.value, imgUrl.value)">
-    <input #title type="text" [value]="editingProject?.title || ''" placeholder="Project Title" required>
-    <textarea #desc [value]="editingProject?.desc || ''" placeholder="Description"></textarea>
-    <input #imgUrl type="text" [value]="editingProject?.imageUrl || ''" placeholder="Image URL">
-    
-    <button type="submit">{{ editingProject ? 'Save Changes' : 'Create Project' }}</button>
-    <button type="button" *ngIf="editingProject" (click)="cancelEdit()">Cancel</button>
-  </form>
-</div>
-
-<div class="kanban-list">
-  <h3>Existing Projects</h3>
-  @for (project of projects; track project._id) { 
-    <div class="kanban-card">
-      <h4>{{ project.title }}</h4>
-      <div class="actions">
-        <button class="edit-btn" (click)="editProject(project)">✏️</button>
-        <button class="delete-btn" (click)="removeProject(project._id)">🗑️</button>
-      </div>
+  <section class="form-section">
+    <div class="section-header">
+      <div class="section-label">{{ editingProject ? 'Modifying Entry' : 'New Entry' }}</div>
+      <h2>{{ editingProject ? 'Edit Project' : 'Create Project' }}</h2>
+      <p>Fill in the details below to {{ editingProject ? 'update' : 'add' }} a project.</p>
     </div>
-  }
+
+    <form #projectForm="ngForm" (submit)="submitProject($event, projectForm.value)">
+      <div class="field-row">
+        <div class="field-group">
+          <label>Project Title</label>
+          <input type="text" name="title" [ngModel]="editingProject?.title" placeholder="e.g. Analytics Dashboard" required />
+        </div>
+        <div class="field-group">
+          <label>Image URL</label>
+          <input type="text" name="imageUrl" [ngModel]="editingProject?.imageUrl" placeholder="https://..." required />
+        </div>
+      </div>
+
+      <div class="field-row three">
+        <div class="field-group">
+          <label>Year</label>
+          <input type="text" name="year" [ngModel]="editingProject?.year" placeholder="e.g. 2024" />
+        </div>
+        <div class="field-group">
+          <label>Your Role</label>
+          <input type="text" name="role" [ngModel]="editingProject?.role" placeholder="e.g. Lead Designer" />
+        </div>
+        <div class="field-group">
+          <label>GitHub Link</label>
+          <input type="text" name="githubUrl" [ngModel]="editingProject?.githubUrl" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Project Description</label>
+        <textarea name="desc" [ngModel]="editingProject?.desc" class="desc-field" placeholder="Describe the project..." required></textarea>
+      </div>
+
+      <hr class="form-divider" />
+
+      <div class="color-row">
+        <div class="color-label-group">
+          <label>Accent Colour</label>
+          <small>Sets the highlights on the project card.</small>
+        </div>
+        <div class="color-swatch-row">
+          <div class="color-picker-wrap">
+            <input type="color" name="color" [ngModel]="editingProject?.color || '#6FAF8F'" #colorInput />
+            <span class="color-hex">{{ colorInput.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn">
+          {{ editingProject ? 'Update Project' : 'Add Project' }}
+        </button>
+        <button type="button" class="cancel-btn" *ngIf="editingProject" (click)="cancelEdit()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <div class="section-gap"><span>Existing Projects</span></div>
+
+  <section class="list-section">
+    <div class="admin-project-list">
+      @for (project of projects; track project._id) {
+        <div class="admin-card">
+          <img [src]="project.imageUrl" alt="Preview" />
+          <div class="admin-card-info">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.year }} • {{ project.role }}</p>
+            <div class="stats">Clicks: {{ project.clicks || 0 }}</div>
+          </div>
+          <div class="admin-card-btns">
+            <button class="edit-btn" (click)="editProject(project)">✏ Edit</button>
+            <button class="delete-btn" (click)="removeProject(project._id)">✕ Delete</button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
 </div>

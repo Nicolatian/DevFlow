@@ -1,29 +1,29 @@
-/* Import Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
 
 :root {
   --bg: #252423;
-  --card: #2E2D2B;
-  --btn: #6FAF8F;
-  --btn-hover: #7FC9A4;
   --text: #F5F5F4;
-  --subtext: #C7C7C5;
-  --border: #3A3937;
 }
 
-/* KILL BROWSER DEFAULTS */
 * {
   box-sizing: border-box;
-  margin: 0;
+  margin: 0; 
   padding: 0;
 }
 
-ul { list-style: none; }
-a { text-decoration: none; color: inherit; }
-
+/* This targets the actual browser window */
 html, body {
-  background-color: #252423 !important;
-  color: #F5F5F4;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg) !important; /* Force the dark background */
+  color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  overflow-x: hidden;
+  margin: 0;
+}
+
+/* Ensure the Angular root component fills the space */
+app-root {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg);
 }
