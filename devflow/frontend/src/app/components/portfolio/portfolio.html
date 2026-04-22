@@ -1,15 +1,77 @@
-<div class="portfolio-container">
+<nav class="main-nav">
+  <div class="logo">
+    <img src="favicon.ico" alt="Logo"> </div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Me</a></li>
+    <li><a href="/work" class="active">Works</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
   <h1>Selected Work</h1>
-  
-  <div class="card-viewer">
-    @for (project of projects; track project.title) {
-      <div class="project-card" [style.border-left-color]="project.color">
-        <h3>{{ project.title }}</h3>
-        <p>{{ project.desc }}</p>
-        <div class="stats">Clicks: {{ project.clicks }}</div>
-        <button class="view-btn" (click)="trackClick(project._id)">View Details</button>
-        <img [src]="project.imageUrl" alt="Project Image" class="project-img">
-      </div>
-    }
+  <p>A selection of projects I've worked on — where code meets design.</p>
+</section>
+
+<div class="portfolio-container">
+  <div class="scroll-track-wrap">
+    <div class="card-viewer" #cardViewer (scroll)="onScroll()">
+      @for (project of projects; track project._id) {
+        <div class="project-card">
+          <div class="project-img-container">
+            <img [src]="project.imageUrl" class="project-img-big">
+          </div>
+          
+          <div class="card-content">
+            <div class="meta-grid">
+              <div class="meta-item"><span>Year:</span> {{ project.year || '2024' }}</div>
+              <div class="meta-item"><span>By:</span> Me</div>
+              <div class="meta-item"><span>Role:</span> {{ project.role || 'Developer' }}</div>
+            </div>
+
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.desc }}</p>
+
+            <div class="card-actions">
+              <button class="view-btn" (click)="trackClick(project._id)">View Details</button>
+              <a [href]="project.githubUrl" class="github-btn" target="_blank">GitHub</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="scroll-nav">
+    <button class="scroll-btn" (click)="scroll(-1)">←</button>
+    <div class="scroll-dots">
+      @for (p of projects; track p._id; let i = $index) {
+        <div class="dot" [class.active]="i === currentIndex"></div>
+      }
+    </div>
+    <button class="scroll-btn" (click)="scroll(1)">→</button>
   </div>
 </div>
+
+<section id="skills" class="skills-section">
+  <h2>Skills</h2>
+  <div class="skills-grid">
+    <span class="skill-tag">Angular</span>
+    <span class="skill-tag">TypeScript</span>
+    <span class="skill-tag">Node.js</span>
+    <span class="skill-tag">MongoDB</span>
+    <span class="skill-tag">UI/UX Design</span>
+    <span class="skill-tag">Three.js</span>
+  </div>
+</section>
+
+<footer id="contact" class="contact-footer">
+  <h2>Get in touch</h2>
+  <div class="contact-links">
+    <a href="mailto:your@email.com">Email</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+  </div>
+</footer>

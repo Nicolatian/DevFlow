@@ -16,6 +16,30 @@
     <div class="text-wrapper">
       <h3>About this project</h3>
       <p class="description">{{ project.desc }}</p>
+
+      <hr class="divider">
+
+      <section class="roadmap-section">
+        <h3>Project Roadmap</h3>
+        <p class="subtitle">Drag and drop to prioritize tasks</p>
+
+        <div class="task-input">
+          <input [(ngModel)]="newTaskText" placeholder="Next step..." (keyup.enter)="addTask()">
+          <button (click)="addTask()">Add Card</button>
+        </div>
+
+        <div cdkDropList class="task-list" (cdkDropListDropped)="drop($event)">
+          @for (task of project.tasks; track task; let i = $index) {
+            <div class="task-card" cdkDrag>
+              <div class="card-content">
+                <span class="drag-handle">⠿</span>
+                <span>{{ task }}</span>
+              </div>
+              <button class="delete-task" (click)="deleteTask(i)">×</button>
+            </div>
+          }
+        </div>
+      </section>
     </div>
   </main>
 </div>

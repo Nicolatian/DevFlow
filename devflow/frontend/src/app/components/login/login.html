@@ -1,0 +1,9 @@
+<div class="login-container">
+  <h2>Admin Login</h2>
+  <form (submit)="onLogin($event, user.value, pass.value)">
+    <input #user type="text" placeholder="Username" required>
+    <input #pass type="password" placeholder="Password" required>
+    <button type="submit">Enter Workspace</button>
+  </form>
+  <p *ngIf="error" class="error">{{ error }}</p>
+</div>

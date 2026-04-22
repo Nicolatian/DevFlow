@@ -25,6 +25,7 @@ export class KanbanComponent implements OnInit {
     });
   }
 
+  // FIXED: Updated types to match the HTML values
   submitProject(event: Event, title: string, desc: string, imageUrl: string) {
     event.preventDefault();
     const projectData = { 
@@ -62,5 +63,10 @@ export class KanbanComponent implements OnInit {
 
   cancelEdit() {
     this.editingProject = null;
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   }
 }

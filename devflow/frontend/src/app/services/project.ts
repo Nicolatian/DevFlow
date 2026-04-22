@@ -1,37 +1,43 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProjectService {
-  private apiUrl = 'http://localhost:3000/api/projects';
+  private apiUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  //  Ajax GET request
-  getProjects(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  // Ajax PATCH request for the hit counter
-  incrementClick(id: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/click`, {});
+  private getHeaders() {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
-  // new project data to the server
-  addProject(projectData: any): Observable<any> {
-    return this.http.post(this.apiUrl, projectData);
+
+  getProjects(): Observable<any[]> { 
+    return this.http.get<any[]>(`${this.apiUrl}/projects`); 
   }
+
   getProjectById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/projects/${id}`);
   }
-  // deletes a project by its ID
+
+  incrementClick(id: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/projects/${id}/click`, {});
+  }
+  
+  addProject(project: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/projects`, project, { headers: this.getHeaders() });
+  }
+
+  updateProject(id: string, project: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/projects/${id}`, project, { headers: this.getHeaders() });
+  }
+
   deleteProject(id: string): Observable<any> {
-  return this.http.delete(`${this.apiUrl}/${id}`);
-}
-// updates a project by its ID
-updateProject(id: string, projectData: any): Observable<any> {
-  return this.http.put(`${this.apiUrl}/${id}`, projectData);
-}
+    return this.http.delete(`${this.apiUrl}/projects/${id}`, { headers: this.getHeaders() });
+  }
 }
