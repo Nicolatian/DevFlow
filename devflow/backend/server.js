@@ -25,9 +25,19 @@ const projectSchema = new mongoose.Schema({
   desc: String,
   clicks: { type: Number, default: 0 },
   color: String,
+  techStack: [String], 
   imageUrl: String,
-  tasks: { type: [String], default: [] } 
+  year: String, 
+  role: String,
+  githubUrl: String,
+  tasks: {
+    ideas: { type: [String], default: [] },
+    doing: { type: [String], default: [] },
+    review: { type: [String], default: [] }
+  }
 });
+
+  
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -59,9 +69,15 @@ async function seedDatabase() {
     const projectCount = await Project.countDocuments();
     if (projectCount === 0) {
       await Project.create([
-        { title: 'My Portfolio', desc: 'Built with MEAN Stack', clicks: 5, color: '#47A248' },
-        { title: 'Kanban Board', desc: 'Manage your daily tasks', clicks: 12, color: '#007bff' }
-      ]);
+      { 
+        title: 'My Portfolio', 
+        desc: 'Built with MEAN Stack', 
+        techStack: ['angular', 'mongodb', 'nodejs', 'express'],
+        role: 'Full Stack Developer',
+        year: '2024',
+        tasks: { ideas: ['Add dark mode'], doing: ['Fix icons'], review: ['Setup server'] }
+      }
+    ]);
       console.log('!!! Database seeded with starter projects!');
     }
 

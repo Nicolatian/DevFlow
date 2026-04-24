@@ -1,52 +1,66 @@
 <nav class="main-nav">
   <div class="logo">
-    <img src="favicon.ico" alt="Logo" onerror="this.style.background='#3a3937';this.removeAttribute('src')" />
-    <span class="logo-wordmark">NV</span>
+    <a routerLink="/">
+      <img src="favicon.ico" alt="NV" />
+    </a>
   </div>
+
   <div class="nav-admin-info">
     <span>Admin Dashboard</span>
     <button class="logout-btn" (click)="logout()">Logout</button>
   </div>
+
+  <ul class="nav-links">
+    <li><a routerLink="/portfolio" routerLinkActive="active">Projects</a></li>
+    <li><a routerLink="/" fragment="skills">Skills</a></li>
+    <li><a routerLink="/" fragment="contact">Contact</a></li>
+    <li><a routerLink="/kanban" routerLinkActive="active">Admin</a></li>
+  </ul>
 </nav>
 
 <div class="admin-container">
   <section class="form-section">
     <div class="section-header">
-      <div class="section-label">{{ editingProject ? 'Modifying Entry' : 'New Entry' }}</div>
-      <h2>{{ editingProject ? 'Edit Project' : 'Create Project' }}</h2>
-      <p>Fill in the details below to {{ editingProject ? 'update' : 'add' }} a project.</p>
+      <div class="section-label">{{ editingProject?._id ? 'Modifying Entry' : 'New Entry' }}</div>
+      <h2>{{ editingProject?._id ? 'Edit Project' : 'Create Project' }}</h2>
+      <p>Fill in the details below to {{ editingProject?._id ? 'update' : 'add' }} a project.</p>
     </div>
 
     <form #projectForm="ngForm" (submit)="submitProject($event, projectForm.value)">
       <div class="field-row">
         <div class="field-group">
           <label>Project Title</label>
-          <input type="text" name="title" [ngModel]="editingProject?.title" placeholder="e.g. Analytics Dashboard" required />
+          <input type="text" name="title" [(ngModel)]="editingProject.title" placeholder="e.g. Analytics Dashboard" required />
         </div>
         <div class="field-group">
           <label>Image URL</label>
-          <input type="text" name="imageUrl" [ngModel]="editingProject?.imageUrl" placeholder="https://..." required />
+          <input type="text" name="imageUrl" [(ngModel)]="editingProject.imageUrl" placeholder="https://..." required />
         </div>
       </div>
 
       <div class="field-row three">
         <div class="field-group">
           <label>Year</label>
-          <input type="text" name="year" [ngModel]="editingProject?.year" placeholder="e.g. 2024" />
+          <input type="text" name="year" [(ngModel)]="editingProject.year" placeholder="e.g. 2024" />
         </div>
         <div class="field-group">
           <label>Your Role</label>
-          <input type="text" name="role" [ngModel]="editingProject?.role" placeholder="e.g. Lead Designer" />
+          <input type="text" name="role" [(ngModel)]="editingProject.role" placeholder="e.g. Lead Designer" />
         </div>
         <div class="field-group">
           <label>GitHub Link</label>
-          <input type="text" name="githubUrl" [ngModel]="editingProject?.githubUrl" placeholder="https://..." />
+          <input type="text" name="githubUrl" [(ngModel)]="editingProject.githubUrl" placeholder="https://..." />
         </div>
+      </div>
+
+       <div class="field-group">
+        <label>Skills / Tech Stack</label>
+        <input type="text" name="techStack" [(ngModel)]="skillsString" placeholder="csharp, unity, angular" />
       </div>
 
       <div class="field-group">
         <label>Project Description</label>
-        <textarea name="desc" [ngModel]="editingProject?.desc" class="desc-field" placeholder="Describe the project..." required></textarea>
+        <textarea name="desc" [(ngModel)]="editingProject.desc" class="desc-field" placeholder="Describe the project..." required></textarea>
       </div>
 
       <hr class="form-divider" />
@@ -58,7 +72,7 @@
         </div>
         <div class="color-swatch-row">
           <div class="color-picker-wrap">
-            <input type="color" name="color" [ngModel]="editingProject?.color || '#6FAF8F'" #colorInput />
+            <input type="color" name="color" [(ngModel)]="editingProject.color" #colorInput />
             <span class="color-hex">{{ colorInput.value }}</span>
           </div>
         </div>
@@ -66,10 +80,10 @@
 
       <div class="form-actions">
         <button type="submit" class="save-btn">
-          {{ editingProject ? 'Update Project' : 'Add Project' }}
+          {{ editingProject?._id ? 'Update Project' : 'Add Project' }}
         </button>
-        <button type="button" class="cancel-btn" *ngIf="editingProject" (click)="cancelEdit()">
-          Cancel
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">
+          {{ editingProject?._id ? 'Cancel' : 'Clear Form' }}
         </button>
       </div>
     </form>
@@ -78,21 +92,38 @@
   <div class="section-gap"><span>Existing Projects</span></div>
 
   <section class="list-section">
-    <div class="admin-project-list">
-      @for (project of projects; track project._id) {
-        <div class="admin-card">
-          <img [src]="project.imageUrl" alt="Preview" />
-          <div class="admin-card-info">
-            <h3>{{ project.title }}</h3>
-            <p>{{ project.year }} • {{ project.role }}</p>
-            <div class="stats">Clicks: {{ project.clicks || 0 }}</div>
+  <div class="admin-project-list">
+    @for (project of projects; track project._id) {
+      <div class="admin-card">
+        <img [src]="project.imageUrl" alt="Preview" />
+        
+        <div class="admin-card-info">
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.year }} • {{ project.role }}</p>
+          
+          <div class="admin-skill-icons" style="display: flex; gap: 8px; margin-top: 8px;">
+            @for (slug of project.techStack; track slug) {
+              <img 
+                [src]="'https://cdn.simpleicons.org/' + slug + '/6FAF8F'" 
+                [title]="slug"
+                style="width: 18px; height: 18px;" 
+                alt="icon" 
+              />
+            }
           </div>
-          <div class="admin-card-btns">
-            <button class="edit-btn" (click)="editProject(project)">✏ Edit</button>
-            <button class="delete-btn" (click)="removeProject(project._id)">✕ Delete</button>
+
+          <div class="stats" style="margin-top: 5px; font-size: 0.8rem; color: #7A7977;">
+            Clicks: {{ project.clicks || 0 }}
           </div>
         </div>
-      }
-    </div>
-  </section>
-</div>
+
+        <div class="admin-card-btns">
+          <button class="edit-btn" (click)="editProject(project)">✏ Edit</button>
+          <button class="delete-btn" (click)="removeProject(project._id)">✕ Delete</button>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+</div> 
+

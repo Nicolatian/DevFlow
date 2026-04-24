@@ -1,90 +1,312 @@
-.divider {
-  margin: 30px 0;
-  border: 0;
-  border-top: 1px solid #eee;
+/* ── 1. PAGE WRAPPER & ANIMATIONS ── */
+.detail-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 40px 120px;
+  animation: fadeInPage 0.5s ease both;
+  color: #F5F5F4;
 }
 
-.roadmap-section h3 {
-  margin-bottom: 5px;
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.subtitle {
+.divider { 
+  border: 0; 
+  border-top: 1px solid #3A3937; 
+  margin: 60px 0; 
+}
+
+/* ── 2. NAVIGATION & BUTTONS ── */
+.navigation {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid #3A3937;
+  color: #A9A9A9;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 15px;
-}
-
-.task-input {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.task-input input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.task-input button {
-  background: #333;
-  color: white;
-  border: none;
-  padding: 0 15px;
-  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-}
-
-.task-list {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  min-height: 50px;
-}
-
-.task-card {
-  background: white;
-  padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  display: flex;
-  justify-content: space-between;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
-  border-left: 4px solid #333; /* Matches project color if you want */
+  gap: 8px;
 }
 
-.card-content {
+.back-btn:hover {
+  border-color: #6FAF8F;
+  color: #6FAF8F;
+  background: rgba(111,175,143,0.05);
+}
+
+/* ── 3. PROJECT HEADER ── */
+.project-header {
+  padding-bottom: 28px;
+  border-bottom: 3px solid #6FAF8F; 
+  margin-bottom: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.project-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  margin: 0;
+  color: #F5F5F4;
+}
+
+.role-subtitle {
+  color: #A9A9A9;
+  font-size: 1.1rem;
+  margin: 8px 0 0 0;
+}
+
+.view-count {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #6FAF8F;
+  background: rgba(111,175,143,0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(111,175,143,0.2);
+}
+
+/* ── 4. MAIN CONTENT & IMAGES ── */
+.project-content {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  margin-bottom: 80px;
+  align-items: start;
+}
+
+.image-wrapper {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #3A3937;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.main-img {
+  width: 100%;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+
+
+.text-wrapper h3 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: #F5F5F4;
+}
+
+.description {
+  color: #A9A9A9;
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+/* ── 5. SKILLS & TECH STACK ── */
+/* Small badges in the top section */
+.skills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.skill-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;  /* Increased 25% from 32px */
+  height: 40px; /* Increased 25% from 32px */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #3A3937;
+  border-radius: 8px;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.skill-icon-badge:hover {
+  transform: translateY(-5px);
+  border-color: #6FAF8F;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.skill-icon-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Large grid tiles in the bottom section */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.skill-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1C1C1A;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #2E2E2C;
+  transition: border-color 0.2s ease;
+}
+
+.skill-tile:hover {
+  border-color: #3A3937;
+  transform: translateY(-2px);
+  border-color: #6FAF8F;
+  background: rgba(255, 255, 255, 0.1);
+
+}
+
+.skill-tile img {
+  width: 25px;  
+  height: 25px; 
+}
+
+.skill-tile span {
+  font-size: 0.95rem;
+  color: #F5F5F4;
+}
+
+/* ── 6. META CHIPS (GITHUB) ── */
+.project-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.meta-chip.github {
+  background: #2E2D2B;
+  border: 1px solid #3A3937;
+  color: #F5F5F4;
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.drag-handle {
+.meta-chip.github:hover {
+  border-color: #6FAF8F;
+  color: #6FAF8F;
+  transform: translateY(-3px);
+  background: #3A3937;
+}
+
+.chip-icon-img {
+  width: 24px; /* Slightly larger GitHub icon */
+  height: 24px;
+}
+
+/* ── 7. KANBAN BOARD ── */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.kanban-col {
+  background: #2E2D2B;
+  border: 1px solid #3A3937;
+  border-radius: 16px;
+  padding: 24px;
+  min-height: 400px;
+}
+
+.col-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.col-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.col-dot { width: 8px; height: 8px; border-radius: 50%; }
+.col-ideas .col-dot { background: #9B8FD4; }
+.col-doing .col-dot { background: #E5A84B; }
+.col-review .col-dot { background: #6FAF8F; }
+
+.task-list { min-height: 100px; display: flex; flex-direction: column; gap: 12px; }
+
+.task-card {
+  background: #252423;
+  border: 1px solid #3A3937;
+  padding: 16px;
+  border-radius: 12px;
+  color: #F5F5F4;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: grab;
-  color: #ccc;
-  font-weight: bold;
 }
 
 .delete-task {
-  background: none;
+  background: transparent;
   border: none;
-  color: #ccc;
-  font-size: 20px;
+  color: #7A7977;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.add-task-row {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.add-task-input {
+  flex: 1;
+  background: #252423;
+  border: 1px solid #3A3937;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+}
+
+.add-task-btn {
+  background: #6FAF8F;
+  border: none;
+  color: white;
+  padding: 0 15px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.delete-task:hover {
-  color: #ff4444;
-}
-
-/* CDK Drag and Drop visuals */
-.cdk-drag-preview {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-  border-radius: 6px;
-}
-
-.cdk-drag-placeholder {
-  opacity: 0.3;
+/* ── 8. RESPONSIVE DESIGN ── */
+@media (max-width: 900px) {
+  .project-content { grid-template-columns: 1fr; }
+  .kanban-board { grid-template-columns: 1fr; }
+  .project-header { flex-direction: column; align-items: flex-start; }
 }

@@ -1,45 +1,142 @@
 <div class="detail-container" *ngIf="project">
+
   <div class="navigation">
     <button (click)="goBack()" class="back-btn">← Back to Portfolio</button>
   </div>
-  
-  <header class="project-header" [style.border-bottom-color]="project.color">
-    <h1>{{ project.title }}</h1>
-    <span class="view-count"> {{ project.clicks }} Views</span>
+
+  <header class="project-header" [style.border-bottom-color]="project.color || '#6FAF8F'">
+    <div class="header-main">
+      <h1>{{ project.title }}</h1>
+      <p class="role-subtitle">{{ project.role }} • {{ project.year }}</p>
+    </div>
+    <span class="view-count">{{ project.clicks || 0 }} Views</span>
   </header>
 
   <main class="project-content">
     <div class="image-wrapper">
-      <img [src]="project.imageUrl" [alt]="project.title" class="main-img">
+      <img [src]="project.imageUrl || 'assets/placeholder.jpg'" [alt]="project.title" class="main-img" />
     </div>
-    
+
     <div class="text-wrapper">
+      <div class="section-eyebrow">The Brief</div>
       <h3>About this project</h3>
       <p class="description">{{ project.desc }}</p>
 
-      <hr class="divider">
-
-      <section class="roadmap-section">
-        <h3>Project Roadmap</h3>
-        <p class="subtitle">Drag and drop to prioritize tasks</p>
-
-        <div class="task-input">
-          <input [(ngModel)]="newTaskText" placeholder="Next step..." (keyup.enter)="addTask()">
-          <button (click)="addTask()">Add Card</button>
+      <div class="skills-row" *ngIf="project.techStack?.length">
+        <div class="skill-icon-badge" *ngFor="let slug of project.techStack">
+          <img 
+            [src]="'https://cdn.simpleicons.org/' + slug + '?color=F5F5F4'" 
+            [alt]="slug" 
+            (error)="$event.target.style.display='none'" />
         </div>
+      </div>
 
-        <div cdkDropList class="task-list" (cdkDropListDropped)="drop($event)">
-          @for (task of project.tasks; track task; let i = $index) {
+      <div class="project-meta">
+        <a class="meta-chip github" *ngIf="project.githubUrl" [href]="project.githubUrl" target="_blank">
+          <img src="https://cdn.simpleicons.org/github?color=F5F5F4" class="chip-icon-img" alt="GitHub" />
+          GitHub Repository
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <hr class="divider" />
+
+  <section class="project-tech-stack" *ngIf="project.techStack?.length">
+    <div class="section-eyebrow">Stack</div>
+    <h3>Tools & Technologies</h3>
+    <div class="skills-grid">
+      @for (skill of project.techStack; track skill) {
+        <div class="skill-tile">
+          <img [src]="'https://cdn.simpleicons.org/' + skill + '?color=F5F5F4'" [alt]="skill">
+          <span>{{ skill }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="roadmap-section">
+    <div class="section-eyebrow">Live Roadmap</div>
+    <h2 class="section-title">Development Board</h2>
+    <p class="section-sub">A look behind the scenes at the features being built for {{project.title}}.</p>
+
+    <div class="kanban-board" cdkDropListGroup>
+      
+      <div class="kanban-col col-ideas">
+        <div class="col-header">
+          <span class="col-title"><span class="col-dot"></span> Ideas</span>
+          <span class="col-count">{{ project.tasks?.ideas?.length || 0 }}</span>
+        </div>
+        
+        <div 
+          cdkDropList 
+          [cdkDropListData]="project.tasks.ideas" 
+          class="task-list" 
+          (cdkDropListDropped)="drop($event, 'ideas')">
+          @for (task of project.tasks.ideas; track task; let i = $index) {
             <div class="task-card" cdkDrag>
-              <div class="card-content">
-                <span class="drag-handle">⠿</span>
-                <span>{{ task }}</span>
-              </div>
-              <button class="delete-task" (click)="deleteTask(i)">×</button>
+              <span class="task-text">{{ task }}</span>
+              <button class="delete-task" (click)="deleteTask('ideas', i)">×</button>
             </div>
           }
         </div>
-      </section>
+
+        <div class="add-task-row">
+          <input class="add-task-input" [(ngModel)]="newTask.ideas" placeholder="New idea..." (keyup.enter)="addTask('ideas')" />
+          <button class="add-task-btn" (click)="addTask('ideas')">+</button>
+        </div>
+      </div>
+
+      <div class="kanban-col col-doing">
+        <div class="col-header">
+          <span class="col-title"><span class="col-dot"></span> In Progress</span>
+          <span class="col-count">{{ project.tasks?.doing?.length || 0 }}</span>
+        </div>
+        
+        <div 
+          cdkDropList 
+          [cdkDropListData]="project.tasks.doing" 
+          class="task-list" 
+          (cdkDropListDropped)="drop($event, 'doing')">
+          @for (task of project.tasks.doing; track task; let i = $index) {
+            <div class="task-card" cdkDrag>
+              <span class="task-text">{{ task }}</span>
+              <button class="delete-task" (click)="deleteTask('doing', i)">×</button>
+            </div>
+          }
+        </div>
+
+        <div class="add-task-row">
+          <input class="add-task-input" [(ngModel)]="newTask.doing" placeholder="In progress..." (keyup.enter)="addTask('doing')" />
+          <button class="add-task-btn" (click)="addTask('doing')">+</button>
+        </div>
+      </div>
+
+      <div class="kanban-col col-review">
+        <div class="col-header">
+          <span class="col-title"><span class="col-dot"></span> Complete</span>
+          <span class="col-count">{{ project.tasks?.review?.length || 0 }}</span>
+        </div>
+        
+        <div 
+          cdkDropList 
+          [cdkDropListData]="project.tasks.review" 
+          class="task-list" 
+          (cdkDropListDropped)="drop($event, 'review')">
+          @for (task of project.tasks.review; track task; let i = $index) {
+            <div class="task-card" cdkDrag>
+              <span class="task-text">{{ task }}</span>
+              <button class="delete-task" (click)="deleteTask('review', i)">×</button>
+            </div>
+          }
+        </div>
+
+        <div class="add-task-row">
+          <input class="add-task-input" [(ngModel)]="newTask.review" placeholder="Done..." (keyup.enter)="addTask('review')" />
+          <button class="add-task-btn" (click)="addTask('review')">+</button>
+        </div>
+      </div>
+
     </div>
-  </main>
+  </section>
 </div>
