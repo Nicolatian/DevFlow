@@ -167,6 +167,7 @@
   border-radius: 10px;
   border: 1px solid #2E2E2C;
   transition: border-color 0.2s ease;
+  margin-bottom: 50px;
 }
 
 .skill-tile:hover {
