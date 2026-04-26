@@ -24,10 +24,9 @@
 }
 
 .logo img { 
-  width: 40px; 
+  width: auto; 
   height: 40px; 
   border-radius: 8px; 
-  display: block;
 }
 
 .nav-links {
@@ -168,6 +167,18 @@ input[type="text"], textarea {
   cursor: pointer;
   flex: 1;
   margin-top: 10px;
+}
+
+.cancel-btn {
+  background: #FF645C;
+  color: white;
+  border: 0px;
+  padding: 16px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
+  margin-top: 20px;
+  margin-left: 10px;
 }
 
 .admin-card {
