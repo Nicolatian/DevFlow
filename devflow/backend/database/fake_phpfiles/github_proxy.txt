@@ -1,0 +1,33 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+
+$repo = $_GET['repo']; // Expected format: "Username/RepoName"
+$conn = new mysqli("localhost", "root", "", "clickCounter_db");
+
+// 1. Check for cached data from the last 24 hours
+$stmt = $conn->prepare("SELECT data FROM github_cache WHERE repo_name = ? AND last_fetched > NOW() - INTERVAL 1 DAY");
+$stmt->bind_param("s", $repo);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    echo $row['data']; 
+} else {
+    // 2. Fetch fresh data from GitHub API
+    $url = "https://api.github.com/repos/$repo/commits";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'PHP-Server'); // Required by GitHub API
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // 3. Update the MySQL cache
+    $stmt = $conn->prepare("INSERT INTO github_cache (repo_name, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?, last_fetched = NOW()");
+    $stmt->bind_param("sss", $repo, $response, $response);
+    $stmt->execute();
+
+    echo $response;
+}
+?>

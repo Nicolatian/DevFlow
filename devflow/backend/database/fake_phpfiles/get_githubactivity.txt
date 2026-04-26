@@ -1,0 +1,23 @@
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+
+$conn = new mysqli("localhost", "root", "", "clickCounter_db");
+
+$sql = "
+SELECT click_date, COUNT(*) as count
+FROM project_clicks
+GROUP BY click_date
+ORDER BY click_date ASC
+";
+
+$result = $conn->query($sql);
+
+$data = [];
+
+while ($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
+
+echo json_encode($data);
+?>

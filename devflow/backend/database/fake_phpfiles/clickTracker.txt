@@ -1,0 +1,21 @@
+// Not the actual file but what i have in the correct folder
+
+<?php
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+
+$conn = new mysqli("localhost", "root", "", "clickCounter_db");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    $projectId = $data['projectId'];
+    $date = date('Y-m-d');
+
+    // Insert a record for today
+    $stmt = $conn->prepare("INSERT INTO project_clicks (project_id, click_date) VALUES (?, ?)");
+    $stmt->bind_param("ss", $projectId, $date);
+    $stmt->execute();
+
+    echo json_encode(["status" => "success"]);
+}
+?>

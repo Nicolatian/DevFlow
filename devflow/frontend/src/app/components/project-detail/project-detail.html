@@ -117,11 +117,10 @@
           <span class="col-title"><span class="col-dot"></span> Complete</span>
           <span class="col-count">{{ project.tasks?.review?.length || 0 }}</span>
         </div>
-        
-        <div 
-          cdkDropList 
-          [cdkDropListData]="project.tasks.review" 
-          class="task-list" 
+
+        <div cdkDropList
+          [cdkDropListData]="project.tasks.review"
+          class="task-list"
           (cdkDropListDropped)="drop($event, 'review')">
           @for (task of project.tasks.review; track task; let i = $index) {
             <div class="task-card" cdkDrag>
@@ -138,5 +137,22 @@
       </div>
 
     </div>
+
+    <div class="github-history">
+      <div class="history-header">
+        <h3>Recent Activity</h3>
+        <span class="year-label">Last 365 Days</span>
+      </div>
+  
+      <div class="grid-scroll-container">
+        <div class="commit-grid">
+         <div *ngFor="let i of yearSquares" 
+             class="commit-square"
+             [attr.data-level]="countCommits(getDateFromIndex(i))">
+        </div>
+        </div>
+      </div>
+    </div>
+
   </section>
 </div>

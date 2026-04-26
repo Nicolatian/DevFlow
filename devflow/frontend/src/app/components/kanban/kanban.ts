@@ -3,6 +3,7 @@ import { ProjectService } from '../../services/project';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-kanban',
@@ -15,12 +16,20 @@ export class KanbanComponent implements OnInit {
   projects: any[] = [];
   editingProject: any = {};
   skillsString: string = '';
+  activityData: any[] = [];
+
+  loadActivity() {
+    this.http.get<any[]>('http://localhost/your-path/get_activity.php').subscribe(data => {
+    this.activityData = data;
+    });
+  }
 
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService, private http: HttpClient) {}
 
   ngOnInit() {
     this.loadProjects();
+    this.loadActivity();
   }
 
   loadProjects() {

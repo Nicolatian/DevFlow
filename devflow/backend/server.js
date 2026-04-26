@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI)
 // --- SCHEMAS ---
 const projectSchema = new mongoose.Schema({
   title: String,
+  repoName: String,  
   desc: String,
   clicks: { type: Number, default: 0 },
   color: String,
@@ -71,6 +72,7 @@ async function seedDatabase() {
       await Project.create([
       { 
         title: 'My Portfolio', 
+        repoName: 'DevFlow',
         desc: 'Built with MEAN Stack', 
         techStack: ['angular', 'mongodb', 'nodejs', 'express'],
         role: 'Full Stack Developer',

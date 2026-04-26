@@ -125,5 +125,17 @@
     }
   </div>
 </section>
+
+<section class="admin-analytics">
+  <h2>Website Engagement Trends</h2>
+  <div class="trend-chart">
+    @for (day of activityData; track day.click_date) {
+      <div class="bar-container">
+        <div class="bar" [style.height.px]="day.count * 20" [title]="day.click_date"></div>
+        <span class="bar-label">{{ day.click_date | date:'MM/dd' }}</span>
+      </div>
+    }
+  </div>
+</section>
 </div> 
 

@@ -233,11 +233,3 @@ input[type="text"], textarea {
 .admin-skill-icons img:hover {
   opacity: 1;
 }
-
-/* Optional: style the helper text below the input */
-.field-group small {
-  display: block;
-  margin-top: 4px;
-  color: #7A7977;
-  font-style: italic;
-}
