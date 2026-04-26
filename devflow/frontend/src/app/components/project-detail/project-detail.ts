@@ -18,6 +18,7 @@ export class ProjectDetail implements OnInit {
   commitDays: string[] = [];
   newTask = { ideas: '', doing: '', review: '' };
   yearSquares: number[] = Array.from({ length: 365 }, (_, i) => i);
+  monthLabels: { name: string, col: number }[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -27,68 +28,88 @@ export class ProjectDetail implements OnInit {
   ) {}
 
  ngOnInit(): void {
-   this.commitDays = [];
-  const id = this.route.snapshot.paramMap.get('id');
-  if (id) {
-    this.projectService.getProjectById(id).subscribe({
-      next: (data) => {
-        this.project = data;
-        const repoPath = `Nicolatian/${this.project.repoName}`; 
+    this.commitDays = [];
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.projectService.getProjectById(id).subscribe({
+        next: (data: any) => {
+          this.project = data;
+          const repoPath = `Nicolatian/${this.project.repoName}`; 
 
-        // 1. PHP/MySQL: Track the click
-        this.http.post('http://localhost/project_devflow/track.php', { projectId: id })
-          .subscribe(() => console.log('Click tracked!'));
+          // 1. PHP/MySQL: Track the click
+          this.http.post('http://localhost/project_devflow/track.php', { projectId: id })
+            .subscribe(() => console.log('Click tracked!'));
 
-        // 2. PHP/MySQL: Fetch cached GitHub history
-        this.http.get<any>(`http://localhost/project_devflow/github_proxy.php?repo=${repoPath}`)
-          .subscribe({
-            next: (response) => {
-              const commits = typeof response === 'string' ? JSON.parse(response) : response;
-              if (Array.isArray(commits)) {
-                this.commitDays = commits.map(c => c.commit.author.date.split('T')[0]);
-              }
-            },
-            error: (err) => console.error("PHP Fetch failed:", err)
-          });
+          // 2. PHP/MySQL: Fetch cached GitHub history
+          this.http.get<any>(`http://localhost/project_devflow/github_proxy.php?repo=${repoPath}`)
+            .subscribe({
+              next: (response: any) => {
+                const commits = typeof response === 'string' ? JSON.parse(response) : response;
+                if (Array.isArray(commits)) {
+                  this.commitDays = commits.map((c: any) => c.commit.author.date.split('T')[0]);
+                }
+              },
+              error: (err: any) => console.error("PHP Fetch failed:", err)
+            });
 
-        // --- Rest of your Kanban initialization ---
-        if (!this.project.techStack) this.project.techStack = [];
-        if (!this.project.tasks || Array.isArray(this.project.tasks)) {
-          const old = Array.isArray(this.project.tasks) ? this.project.tasks : [];
-          this.project.tasks = { ideas: old, doing: [], review: [] };
-        }
-      },
-      error: (err) => console.error('Failed to load project:', err)
-    });
+          // Kanban initialization
+          if (!this.project.techStack) this.project.techStack = [];
+          if (!this.project.tasks || Array.isArray(this.project.tasks)) {
+            const old = Array.isArray(this.project.tasks) ? this.project.tasks : [];
+            this.project.tasks = { ideas: old, doing: [], review: [] };
+          }
+          this.yearSquares = Array.from({ length: 365 }, (_, i) => i);
+          this.generateMonthLabels();
+        },
+        error: (err: any) => console.error('Failed to load project:', err)
+      });
+    }
   }
-}
-    // --- GitHub Grid Logic ---
-    // square id for GitHub grid
-    getDateFromIndex(index: number): string {
+
+  // --- GitHub Grid Logic ---
+  getDateFromIndex(index: number): string {
     const d = new Date();
+    // Logic to calculate the date for each square
     d.setUTCHours(0, 0, 0, 0); 
     d.setUTCDate(d.getUTCDate() - (364 - index));
     return d.toISOString().split('T')[0];
   }
-    hasCommit(index: number): boolean {
-      if (!this.commitDays || this.commitDays.length === 0) return false;
-  
-    const dateToCheck = this.getDateFromIndex(index);
-    const match = this.commitDays.includes(dateToCheck);
-  
-    if (index > 360) {
-        console.log(`Square ${index} is ${dateToCheck}. Match found: ${match}`);
-    }
-  
-    return match;
+
+  getCommitLevel(index: number): number {
+    const date = this.getDateFromIndex(index);
+    const count = this.commitDays.filter(d => d === date).length;
+    if (count === 0) return 0;
+    if (count === 1) return 1;
+    if (count === 2) return 2;
+    if (count === 3) return 3;
+    return 4;
   }
 
-    countCommits(date: string): number {
+  generateMonthLabels() {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  this.monthLabels = [];
+  let lastMonth = -1;
+
+  for (let i = 0; i < 365; i += 7) {
+    const date = new Date();
+    date.setUTCDate(date.getUTCDate() - (364 - i));
+    const monthIndex = date.getUTCMonth();
+
+    if (monthIndex !== lastMonth) {
+      this.monthLabels.push({
+        name: months[monthIndex],
+        col: Math.floor(i / 7) + 1 // CSS grid columns are 1-indexed
+      });
+      lastMonth = monthIndex;
+    }
+  }
+}
+
+  countCommits(date: string): number {
     return this.commitDays.filter(d => d === date).length;
   }
 
   // --- Kanban Task Logic ---
-  // Handles reordering tasks within a column and transferring tasks between columns
   drop(event: CdkDragDrop<string[]>, _col: string) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -118,7 +139,6 @@ export class ProjectDetail implements OnInit {
   }
 
   private save() {
-    // Persist the updated Kanban state to the MongoDB backend
     this.projectService.updateProject(this.project._id, { tasks: this.project.tasks }).subscribe();
   }
 

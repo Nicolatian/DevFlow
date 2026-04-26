@@ -143,13 +143,29 @@
         <h3>Recent Activity</h3>
         <span class="year-label">Last 365 Days</span>
       </div>
-  
-      <div class="grid-scroll-container">
-        <div class="commit-grid">
-         <div *ngFor="let i of yearSquares" 
-             class="commit-square"
-             [attr.data-level]="countCommits(getDateFromIndex(i))">
-        </div>
+
+      <div class="graph-container">
+        <div class="days-labels">
+          <span></span> <span>Mon</span>
+          <span></span> <span>Wed</span>
+          <span></span> <span>Fri</span>
+          <span></span> </div>
+
+        <div class="grid-and-months">
+          <div class="month-labels">
+            <span *ngFor="let month of monthLabels" 
+                  [style.grid-column]="month.col">
+              {{ month.name }}
+            </span>
+          </div>
+
+          <div class="github-grid">
+            <div *ngFor="let i of yearSquares" 
+                  class="commit-square" 
+                  [attr.data-level]="getCommitLevel(i)"
+                  [title]="getDateFromIndex(i) + ': ' + countCommits(getDateFromIndex(i)) + ' commits'">
+            </div>
+          </div>
         </div>
       </div>
     </div>
