@@ -102,6 +102,8 @@
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+
+
 .text-wrapper h3 {
   font-size: 1.5rem;
   margin-bottom: 16px;
@@ -115,6 +117,7 @@
 }
 
 /* ── 5. SKILLS & TECH STACK ── */
+/* Small badges in the top section */
 .skills-row {
   display: flex;
   flex-wrap: wrap;
@@ -126,8 +129,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; 
-  height: 40px; 
+  width: 40px;  /* Increased 25% from 32px */
+  height: 40px; /* Increased 25% from 32px */
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid #3A3937;
   border-radius: 8px;
@@ -147,6 +150,7 @@
   object-fit: contain;
 }
 
+/* Large grid tiles in the bottom section */
 .skills-grid {
   display: flex;
   flex-wrap: wrap;
@@ -162,14 +166,16 @@
   padding: 10px 18px;
   border-radius: 10px;
   border: 1px solid #2E2E2C;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease;
   margin-bottom: 50px;
 }
 
 .skill-tile:hover {
+  border-color: #3A3937;
   transform: translateY(-2px);
   border-color: #6FAF8F;
   background: rgba(255, 255, 255, 0.1);
+
 }
 
 .skill-tile img {
@@ -211,7 +217,7 @@
 }
 
 .chip-icon-img {
-  width: 24px; 
+  width: 24px; /* Slightly larger GitHub icon */
   height: 24px;
 }
 
@@ -299,7 +305,15 @@
   cursor: pointer;
 }
 
-/* ── 8. GITHUB GRID (ADVANCED) ── */
+/* ── 8. RESPONSIVE DESIGN ── */
+@media (max-width: 900px) {
+  .project-content { grid-template-columns: 1fr; }
+  .kanban-board { grid-template-columns: 1fr; }
+  .project-header { flex-direction: column; align-items: flex-start; }
+}
+
+
+/* ── 9. GITHUB GRID (FIXED) ── */
 .github-history {
   margin-top: 40px;
   padding: 24px;
@@ -312,48 +326,42 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .graph-container {
   display: flex;
   gap: 12px;
-  font-size: 10px;
-  color: #8b949e;
-  overflow-x: auto;
-  padding-bottom: 10px;
+  margin-top: 20px;
 }
 
 .days-labels {
   display: grid;
   grid-template-rows: repeat(7, 12px);
   gap: 4px;
-  margin-top: 20px; /* Aligns Mon/Wed/Fri with the grid rows */
-  text-align: right;
-  padding-right: 4px;
-}
-
-.days-labels span {
-  height: 12px;
-  line-height: 12px;
+  font-size: 10px;
+  color: #7A7977;
+  padding-top: 22px; /* Aligns Mon/Wed/Fri with the squares */
 }
 
 .grid-and-months {
   display: flex;
   flex-direction: column;
+  overflow-x: auto;
+  padding-bottom: 10px;
 }
 
 .month-labels {
   display: grid;
-  grid-template-columns: repeat(53, 12px);
+  grid-template-columns: repeat(52, 12px);
   gap: 4px;
+  font-size: 10px;
+  color: #7A7977;
   margin-bottom: 8px;
-  height: 12px;
 }
 
 .month-labels span {
-  grid-row: 1;
-  white-space: nowrap;
+  grid-column: span 4;
 }
 
 .github-grid {
@@ -369,31 +377,21 @@
   width: 12px;
   height: 12px;
   border-radius: 2px;
+  background: #2E2D2B;
   transition: all 0.2s ease;
 }
 
+
 .commit-square:hover {
-  border: 1px solid #6FAF8F;
+  outline: 1px solid #6FAF8F;
   transform: scale(1.3);
   z-index: 10;
 }
-
 .commit-square[data-level="0"] { background: #2E2D2B; } 
-.commit-square[data-level="1"] { background: #1b3d2d; }
-.commit-square[data-level="2"] { background: #2f634a; }
-.commit-square[data-level="3"] { background: #4a8f6d; }
-.commit-square[data-level="4"] { background: #6FAF8F; }
+.commit-square[data-level="1"] { background: #2d453a !important; }
+.commit-square[data-level="2"] { background: #4d7a64 !important; }
+.commit-square[data-level="3"] { background: #6FAF8F !important; }
+.commit-square[data-level="4"] { background: #a3cfbb !important; }
 
-/* Active state for squares with commits */
-.commit-square.active {
-  background: #6FAF8F !important;      
-  box-shadow: 0 0 8px rgba(111, 175, 143, 0.6);
-}
 
-/* ── 9. RESPONSIVE DESIGN ── */
-@media (max-width: 900px) {
-  .project-content { grid-template-columns: 1fr; }
-  .kanban-board { grid-template-columns: 1fr; }
-  .project-header { flex-direction: column; align-items: flex-start; }
-  .graph-container { padding-left: 0; }
-}
+

@@ -69,8 +69,7 @@ export class ProjectDetail implements OnInit {
   // --- GitHub Grid Logic ---
   getDateFromIndex(index: number): string {
     const d = new Date();
-    // Logic to calculate the date for each square
-    d.setUTCHours(0, 0, 0, 0); 
+    d.setUTCHours(0, 0, 0, 0);
     d.setUTCDate(d.getUTCDate() - (364 - index));
     return d.toISOString().split('T')[0];
   }
