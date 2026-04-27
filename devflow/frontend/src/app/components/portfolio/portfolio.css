@@ -368,7 +368,7 @@ body {
   background: #6FAF8F;
   filter: brightness(1.1);
   transform: translateY(-1px);
-  transform scale(1.08);
+  transform: scale(1.08);
 }
 
 /* =========================

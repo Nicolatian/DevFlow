@@ -1,23 +1,26 @@
 require('dotenv').config();
 const express = require('express');
+const axios = require('axios'); 
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const path = require('path'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET || 'SUPER_SECRET_KEY';
+
 app.use(cors()); 
 app.use(express.json()); 
 
 // --- DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('YEEESSSSS Connected to MongoDB!!!!');
+    console.log('Connected to MongoDB LESSS GOOO!!');
     seedDatabase();
   })
-  .catch(err => console.error('NEEEEEEEJJJJJ!!!! MongoDB Connection Error:', err));
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
 // --- SCHEMAS ---
 const projectSchema = new mongoose.Schema({
@@ -38,8 +41,6 @@ const projectSchema = new mongoose.Schema({
   }
 });
 
-  
-
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true }
@@ -48,54 +49,47 @@ const userSchema = new mongoose.Schema({
 const Project = mongoose.model('Project', projectSchema);
 const User = mongoose.model('User', userSchema);
 
-// --- AUTH MIDDLEWARE (THE GUARD) ---
+// --- AUTH MIDDLEWARE ---
 const authenticateToken = (req, res, next) => {
   const authHeader = req.header('Authorization');
-  const token = authHeader && authHeader.split(' ')[1]; // Expects "Bearer TOKEN"
-
-  if (!token) return res.status(401).json({ message: 'Access Denied: No Token Provided' });
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Access Denied' });
 
   try {
     const verified = jwt.verify(token, SECRET_KEY);
     req.user = verified;
     next();
   } catch (err) {
-    res.status(403).json({ message: 'Invalid or Expired Token' });
+    res.status(403).json({ message: 'Invalid Token' });
   }
 };
 
-// --- SEED DATABASE ---
-async function seedDatabase() {
+// --- API ROUTES ---
+
+// github_proxy.php replacement
+app.get('/api/github-proxy', async (req, res) => {
+  const { repo } = req.query; 
   try {
-    const projectCount = await Project.countDocuments();
-    if (projectCount === 0) {
-      await Project.create([
-      { 
-        title: 'My Portfolio', 
-        repoName: 'DevFlow',
-        desc: 'Built with MEAN Stack', 
-        techStack: ['angular', 'mongodb', 'nodejs', 'express'],
-        role: 'Full Stack Developer',
-        year: '2024',
-        tasks: { ideas: ['Add dark mode'], doing: ['Fix icons'], review: ['Setup server'] }
-      }
-    ]);
-      console.log('!!! Database seeded with starter projects!');
-    }
-
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      await User.create({ username: 'admin', password: hashedPassword });
-      console.log('!!! Admin user created: admin / admin123');
-    }
-  } catch (err) {
-    console.error("Seed error:", err);
+    const response = await axios.get(`https://api.github.com/repos/${repo}`, {
+      headers: { 'User-Agent': 'node.js' }
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch GitHub data' });
   }
-}
+});
 
-// --- PUBLIC ROUTES (ANYONE CAN SEE) ---
-app.get('/', (req, res) => res.send('Backend Server is Running!'));
+//  get_activity.php replacement 
+app.get('/api/github-activity', async (req, res) => {
+  try {
+    const response = await axios.get(`https://api.github.com/users/Nicolatian/events`, {
+      headers: { 'User-Agent': 'node.js' }
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch activity' });
+  }
+});
 
 app.get('/api/projects', async (req, res) => {
   const projects = await Project.find();
@@ -105,13 +99,9 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/projects/:id', async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
-    if (!project) {
-      console.log(`Project with ID ${req.params.id} not found.`);
-      return res.status(404).json({ message: 'Project not found' });
-    }
-    res.status(200).json(project); // Explicitly set 200
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
   } catch (err) {
-    console.error("Error fetching project:", err);
     res.status(500).json({ error: "Invalid ID format" });
   }
 });
@@ -121,11 +111,9 @@ app.patch('/api/projects/:id/click', async (req, res) => {
   res.json(updated);
 });
 
-// --- LOGIN ROUTE (THE KEY GENERATOR) ---
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
-
   if (user && await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '7d' });
     res.json({ token });
@@ -134,7 +122,6 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// --- PROTECTED ROUTES (LOCK SYMBOL 🔒) ---
 app.post('/api/projects', authenticateToken, async (req, res) => { 
   const newProject = new Project(req.body);
   const saved = await newProject.save();
@@ -142,22 +129,35 @@ app.post('/api/projects', authenticateToken, async (req, res) => {
 });
 
 app.put('/api/projects/:id', authenticateToken, async (req, res) => { 
-  try {
-    const updated = await Project.findByIdAndUpdate(
-      req.params.id, 
-      req.body, 
-      { returnDocument: 'after' }
-    );
-    if (!updated) return res.status(404).json({ message: "Not found" });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const updated = await Project.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
+  res.json(updated);
 });
+
 app.delete('/api/projects/:id', authenticateToken, async (req, res) => { 
   await Project.findByIdAndDelete(req.params.id);
   res.json({ message: 'Project deleted' });
 });
 
-// --- START ---
-app.listen(PORT, () => console.log(`SERVER START at: http://localhost:${PORT}`));
+
+
+// --- SEED DATABASE ---
+async function seedDatabase() {
+  const projectCount = await Project.countDocuments();
+  if (projectCount === 0) {
+    await Project.create([{ 
+      title: 'My Portfolio', 
+      repoName: 'DevFlow',
+      desc: 'Built with MEAN Stack', 
+      techStack: ['angular', 'mongodb', 'nodejs', 'express'],
+      role: 'Full Stack Developer',
+      year: '2026'
+    }]);
+  }
+  const userCount = await User.countDocuments();
+  if (userCount === 0) {
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    await User.create({ username: 'admin', password: hashedPassword });
+  }
+}
+
+app.listen(PORT, () => console.log(`Backend Active on Port ${PORT}`));
