@@ -4,7 +4,6 @@ import { ProjectService } from '../../services/project';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-project-detail',
@@ -24,45 +23,44 @@ export class ProjectDetail implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private projectService: ProjectService,
-    private http: HttpClient 
+    private projectService: ProjectService
   ) {}
 
- ngOnInit(): void {
+  ngOnInit(): void {
     this.isAdmin = !!localStorage.getItem('token'); // check if admin 
     this.commitDays = [];
     const id = this.route.snapshot.paramMap.get('id');
+
     if (id) {
       this.projectService.getProjectById(id).subscribe({
         next: (data: any) => {
           this.project = data;
+          
+          // 1. Logic for GitHub Repo Path
           const repoPath = `Nicolatian/${this.project.repoName}`; 
 
+          // 2. Track Click via Node.js (Replaces track.php)
           this.projectService.incrementClick(id).subscribe({
-          next: (updatedProject) => {
-            this.project.clicks = updatedProject.clicks; // Ajax updates the UI live
-            console.log('Ajax Success: View count++');
-          },
-          error: (err) => console.error('Ajax failed:', err)
-        });
+            next: (updatedProject) => {
+              this.project.clicks = updatedProject.clicks;
+              console.log('Backend Success: View count++');
+            },
+            error: (err) => console.error('Click tracking failed:', err)
+          });
 
-          // 1. PHP/MySQL: Track the click
-          this.http.post('http://localhost/project_devflow/track.php', { projectId: id })
-            .subscribe(() => console.log('Click tracked!'));
+          // 3. Fetch GitHub history via Node.js Proxy (Replaces github_proxy.php)
+          this.projectService.getGitHubStats(repoPath).subscribe({
+            next: (response: any) => {
+              // Node.js handles the JSON parsing automatically
+              if (Array.isArray(response)) {
+                this.commitDays = response.map((c: any) => c.commit.author.date.split('T')[0]);
+                console.log('GitHub Stats loaded for:', repoPath);
+              }
+            },
+            error: (err: any) => console.error("Node.js GitHub Fetch failed:", err)
+          });
 
-          // 2. PHP/MySQL: Fetch cached GitHub history
-          this.http.get<any>(`http://localhost/project_devflow/github_proxy.php?repo=${repoPath}`)
-            .subscribe({
-              next: (response: any) => {
-                const commits = typeof response === 'string' ? JSON.parse(response) : response;
-                if (Array.isArray(commits)) {
-                  this.commitDays = commits.map((c: any) => c.commit.author.date.split('T')[0]);
-                }
-              },
-              error: (err: any) => console.error("PHP Fetch failed:", err)
-            });
-
-          // Kanban initialization
+          // 4. Kanban initialization
           if (!this.project.techStack) this.project.techStack = [];
           if (!this.project.tasks || Array.isArray(this.project.tasks)) {
             const old = Array.isArray(this.project.tasks) ? this.project.tasks : [];
@@ -71,7 +69,7 @@ export class ProjectDetail implements OnInit {
           this.yearSquares = Array.from({ length: 365 }, (_, i) => i);
           this.generateMonthLabels();
         },
-        error: (err: any) => console.error('Failed to load project:', err)
+        error: (err: any) => console.error('Failed to load project details:', err)
       });
     }
   }
@@ -95,24 +93,24 @@ export class ProjectDetail implements OnInit {
   }
 
   generateMonthLabels() {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  this.monthLabels = [];
-  let lastMonth = -1;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    this.monthLabels = [];
+    let lastMonth = -1;
 
-  for (let i = 0; i < 365; i += 7) {
-    const date = new Date();
-    date.setUTCDate(date.getUTCDate() - (364 - i));
-    const monthIndex = date.getUTCMonth();
+    for (let i = 0; i < 365; i += 7) {
+      const date = new Date();
+      date.setUTCDate(date.getUTCDate() - (364 - i));
+      const monthIndex = date.getUTCMonth();
 
-    if (monthIndex !== lastMonth) {
-      this.monthLabels.push({
-        name: months[monthIndex],
-        col: Math.floor(i / 7) + 1 // CSS grid columns are 1-indexed
-      });
-      lastMonth = monthIndex;
+      if (monthIndex !== lastMonth) {
+        this.monthLabels.push({
+          name: months[monthIndex],
+          col: Math.floor(i / 7) + 1 
+        });
+        lastMonth = monthIndex;
+      }
     }
   }
-}
 
   countCommits(date: string): number {
     return this.commitDays.filter(d => d === date).length;
@@ -152,7 +150,10 @@ export class ProjectDetail implements OnInit {
 
   private save() {
     if (!this.isAdmin) return;
-    this.projectService.updateProject(this.project._id, { tasks: this.project.tasks }).subscribe();
+    // Update the project in MongoDB
+    this.projectService.updateProject(this.project._id, { tasks: this.project.tasks }).subscribe({
+      error: (err) => console.error('Failed to save Kanban state:', err)
+    });
   }
 
   goBack() {

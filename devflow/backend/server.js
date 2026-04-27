@@ -70,12 +70,13 @@ const authenticateToken = (req, res, next) => {
 app.get('/api/github-proxy', async (req, res) => {
   const { repo } = req.query; 
   try {
-    const response = await axios.get(`https://api.github.com/repos/${repo}`, {
+    const response = await axios.get(`https://api.github.com/repos/${repo}/commits`, {
       headers: { 'User-Agent': 'node.js' }
     });
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch GitHub data' });
+    console.error("GitHub API Error:", error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'Failed to fetch GitHub commits' });
   }
 });
 
