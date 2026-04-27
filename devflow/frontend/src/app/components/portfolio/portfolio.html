@@ -16,10 +16,16 @@
 <!-- ------ SECTION NR 1 who am i? ------ -->
 
 <section id="about" class="about-section">
-  <div class="blob-bg"></div> <div class="about-inner">
+  <div class="blob-bg"></div>
+  <div class="blob-bg blob-bg--right"></div>
+
+  <div class="about-inner">
+    <!-- LEFT SIDE: text -->
     <div class="about-text">
       <div class="section-eyebrow">Who am I?</div>
-      <h1 class="about-name">Nicolai Kristian<br><em>Vestergaard</em></h1>
+      <h1 class="about-name">
+        Nicolai Kristian<br><em>Vestergaard</em>
+      </h1>
       <div class="study-pills">
         <span class="study-pill">Medialogy (BSc)</span>
         <span class="study-pill">6th Semester — Aalborg University</span>
@@ -30,15 +36,28 @@
       <p class="about-body">
         Over the past four years I have worked extensively with C# and Unity, and more recently immersed myself in full-stack web development using the MEAN stack.
       </p>
+
+      <div class="about-actions">
+        <a href="#projects" class="about-cta-primary">See my work ↓</a>
+        <a href="#contact" class="about-cta-ghost">Get in touch</a>
+      </div>
     </div>
 
+    <!-- RIGHT SIDE: photo -->
     <div class="about-photo-side">
       <div class="about-photo-wrap">
         <img src="PictureOfMe.jpg" alt="Nicolai Vestergaard" class="about-photo">
         <div class="photo-deco-ring"></div>
+        <!-- floating badge -->
+        <div class="photo-badge">
+          <span class="badge-dot"></span>
+          Open to work
+        </div>
       </div>
     </div>
   </div>
+
+  
 </section>
 
 <!-- ------ SECTION NR 2 portfolio containers ------ -->
@@ -152,13 +171,13 @@
         GitHub
       </a>
       <a href="https://www.linkedin.com/in/nicolatian-vestergaard-7280b535b/" target="_blank" class="meta-chip github">
-        <img src="https://cdn.simpleicons.org/linkedin?color=F5F5F4" class="chip-icon-img" alt="">
+        <img src="https://api.iconify.design/simple-icons:linkedin.svg?color=%23F5F5F4" class="chip-icon-img" alt="LinkedIn">
         LinkedIn
       </a>
     </div>
   </div>
 </section>
 
-<footer id="contact">
+<footer class="footer">
   <p>2026 - Designed by Me & Built by Me</p>
 </footer>
