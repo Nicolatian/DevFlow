@@ -53,4 +53,9 @@ export class PortfolioComponent implements OnInit {
       this.router.navigate(['/portfolio', id]); 
     });
   }
+
+  copyEmail() {
+    navigator.clipboard.writeText('nicolaivestergaard2@gmail.com');
+    alert('Email copied to clipboard!');
+  }
 }

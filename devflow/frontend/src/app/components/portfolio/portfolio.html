@@ -163,7 +163,15 @@
     <h2 class="contact-heading">Let's work<br><em>together</em></h2>
     <p class="contact-sub">My inbox is always open.</p>
     
-    <a href="mailto:nicolaivestergaard2@gmail.com" class="contact-btn">Send me a message →</a>
+    <div class="contact-actions">
+      <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSBmzhHLHrhzCcQklzThFtKFvLtrdJnPbMndCwBlxFrtFCNkJgwPLpVsclPjhQTqjkKDrSfk" class="contact-btn">
+        Send me a message →
+      </a>
+  
+      <button class="copy-email-btn" (click)="copyEmail()">
+        Or copy email address
+      </button>
+    </div>
 
     <div class="project-meta">
       <a href="https://github.com/Nicolatian" target="_blank" class="meta-chip github">

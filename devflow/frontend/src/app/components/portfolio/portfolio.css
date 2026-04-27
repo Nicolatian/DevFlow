@@ -263,6 +263,7 @@ body {
 
 .bridge-sub {
   color: #A9A9A9;
+  margin-top: 12px;
 }
 
 /* =========================
@@ -515,6 +516,23 @@ body {
 
 .contact-btn:hover {
   transform: translateY(-3px);
+}
+
+.copy-email-btn {
+  background: transparent;
+  border: 1px solid #3A3937;
+  color: #A9A9A9;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.copy-email-btn:hover {
+  border-color: #6FAF8F;
+  color: #6FAF8F;
 }
 
 .project-meta { 
