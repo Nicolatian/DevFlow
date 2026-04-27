@@ -1,9 +1,52 @@
-<div class="login-container">
-  <h2>Admin Login</h2>
-  <form (submit)="onLogin($event, user.value, pass.value)">
-    <input #user type="text" placeholder="Username" required>
-    <input #pass type="password" placeholder="Password" required>
-    <button type="submit">Enter Workspace</button>
-  </form>
-  <p *ngIf="error" class="error">{{ error }}</p>
+<div class="login-wrapper">
+
+  <div class="login-blob"></div>
+
+  <div class="login-card">
+
+    <div class="login-brand">
+      <img src="assets/DevFlow.webp" alt="DevFlow" class="login-logo"
+           onerror="this.style.display='none'">
+      <span class="login-logo-text">DevFlow</span>
+    </div>
+
+    <div class="login-header">
+      <div class="login-eyebrow">Admin Access</div>
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-sub">Sign in to manage your portfolio.</p>
+    </div>
+
+    <form class="login-form" (submit)="onLogin($event, user.value, pass.value)">
+
+      <div class="field-group">
+        <label for="username">Username</label>
+        <input #user id="username" type="text" placeholder="Enter username"
+               autocomplete="username" required />
+      </div>
+
+      <div class="field-group">
+        <label for="password">Password</label>
+        <input #pass id="password" type="password" placeholder="••••••••"
+               autocomplete="current-password" required />
+      </div>
+
+      <button type="submit" class="login-btn">
+        Enter Workspace
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+    </form>
+
+    <div class="error-box" *ngIf="error">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6" stroke="#E07B76" stroke-width="1.4"/>
+        <path d="M7 4v4M7 9.5v.5" stroke="#E07B76" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      {{ error }}
+    </div>
+
+  </div>
 </div>

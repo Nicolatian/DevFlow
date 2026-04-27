@@ -21,75 +21,52 @@
 <div class="admin-container">
   <section class="form-section">
     <div class="section-header">
-      <div class="section-label">{{ editingProject?._id ? 'Modifying Entry' : 'New Entry' }}</div>
-      <h2>{{ editingProject?._id ? 'Edit Project' : 'Create Project' }}</h2>
-      <p>Fill in the details below to {{ editingProject?._id ? 'update' : 'add' }} a project.</p>
+      <h2>{{ editingProject?._id ? 'Edit Entry' : 'New Project' }}</h2>
     </div>
 
-    <form #projectForm="ngForm" (submit)="submitProject($event, projectForm.value)">
+    <form (submit)="submitProject($event, editingProject)">
       <div class="field-row">
         <div class="field-group">
           <label>Project Title</label>
-          <input type="text" name="title" [(ngModel)]="editingProject.title" placeholder="e.g. Analytics Dashboard" required />
+          <input type="text" [(ngModel)]="editingProject.title" name="title" required />
         </div>
+        
         <div class="field-group">
-          <label>Image URL</label>
-          <input type="text" name="imageUrl" [(ngModel)]="editingProject.imageUrl" placeholder="https://..." required />
-        </div>
-      </div>
-
-      <div class="field-row three">
-        <div class="field-group">
-          <label>Year</label>
-          <input type="text" name="year" [(ngModel)]="editingProject.year" placeholder="e.g. 2024" />
-        </div>
-        <div class="field-group">
-          <label>Your Role</label>
-          <input type="text" name="role" [(ngModel)]="editingProject.role" placeholder="e.g. Lead Designer" />
-        </div>
-        <div class="field-group">
-          <label>GitHub Link</label>
-          <input type="text" name="githubUrl" [(ngModel)]="editingProject.githubUrl" placeholder="https://..." />
-        </div>
-      </div>
-
-       <div class="field-group">
-        <label>Skills / Tech Stack</label>
-        <input type="text" name="techStack" [(ngModel)]="skillsString" placeholder="csharp, unity, angular" />
-      </div>
-
-      <div class="field-group">
-        <label>Project Description</label>
-        <textarea name="desc" [(ngModel)]="editingProject.desc" class="desc-field" placeholder="Describe the project..." required></textarea>
-      </div>
-
-      <hr class="form-divider" />
-
-      <div class="color-row">
-        <div class="color-label-group">
-          <label>Accent Colour</label>
-          <small>Sets the highlights on the project card.</small>
-        </div>
-        <div class="color-swatch-row">
-          <div class="color-picker-wrap">
-            <input type="color" name="color" [(ngModel)]="editingProject.color" #colorInput />
-            <span class="color-hex">{{ colorInput.value }}</span>
+          <label>Project Thumbnail</label>
+          <div class="upload-box" style="display: flex; gap: 10px;">
+            <input type="text" [(ngModel)]="editingProject.imageUrl" name="imageUrl" placeholder="Cloud URL..." readonly style="flex: 1;"/>
+            <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+            <button type="button" (click)="fileInput.click()" class="upload-btn">
+              {{ isUploading ? '...' : 'Upload' }}
+            </button>
           </div>
         </div>
       </div>
 
+      <div class="field-row three">
+        <div class="field-group"><label>Year</label><input type="text" [(ngModel)]="editingProject.year" name="year" /></div>
+        <div class="field-group"><label>Role</label><input type="text" [(ngModel)]="editingProject.role" name="role" /></div>
+        <div class="field-group"><label>GitHub</label><input type="text" [(ngModel)]="editingProject.githubUrl" name="githubUrl" /></div>
+      </div>
+
+      <div class="field-group">
+        <label>Tech Stack (Comma separated)</label>
+        <input type="text" [(ngModel)]="skillsString" name="skills" placeholder="angular, nodejs..." />
+      </div>
+
+      <div class="field-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="editingProject.desc" name="desc" class="desc-field"></textarea>
+      </div>
+
       <div class="form-actions">
-        <button type="submit" class="save-btn">
-          {{ editingProject?._id ? 'Update Project' : 'Add Project' }}
-        </button>
-        <button type="button" class="cancel-btn" (click)="cancelEdit()">
-          {{ editingProject?._id ? 'Cancel' : 'Clear Form' }}
-        </button>
+        <button type="submit" class="save-btn">{{ editingProject?._id ? 'Update' : 'Create' }}</button>
+        <button type="button" (click)="cancelEdit()" class="cancel-btn">Clear</button>
       </div>
     </form>
   </section>
 
-  <div class="section-gap"><span>Existing Projects</span></div>
+  
 
   <section class="list-section">
   <div class="admin-project-list">
@@ -113,7 +90,7 @@
           </div>
 
           <div class="stats" style="margin-top: 5px; font-size: 0.8rem; color: #7A7977;">
-            Clicks: {{ project.clicks || 0 }}
+            Views: {{ project.clicks || 0 }}
           </div>
         </div>
 
@@ -123,9 +100,29 @@
         </div>
       </div>
     }
+
   </div>
 </section>
 
+<div class="section-gap"><span>Analytics & Activity</span></div>
 
-</div> 
+  <section class="analytics-section">
+    <div class="analytics-bar" *ngIf="activityData.length > 0">
+      <div class="pill-container">
+        @for (stat of activityData; track stat.click_date) {
+          <div class="stat-pill">
+            <span class="date">{{ stat.click_date | date:'MMM d, y' }} :</span>
+            <span class="count">{{ stat.count }} unique views</span>
+          </div>
+        }
+      </div>
+    </div>
+    
+    <div class="no-data" *ngIf="activityData.length === 0">
+      <p>Waiting for project traffic... (Database currently empty)</p>
+    </div>
+  </section>
+</div>
+
+
 

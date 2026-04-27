@@ -22,7 +22,7 @@ export class LoginComponent {
         localStorage.setItem('token', res.token); // Save the badge!
         this.router.navigate(['/kanban']); // Send to Admin page
       },
-      error: () => this.error = 'Access Denied: Wrong credentials'
+      error: () => this.error = 'Access Denied: Who do you think you are?'
     });
   }
 }

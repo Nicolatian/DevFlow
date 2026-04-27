@@ -152,6 +152,14 @@ input[type="text"], textarea {
   padding: 14px;
   color: #F5F5F4;
   outline: none;
+  transition: all 0.3s ease; 
+  box-sizing: border-box; 
+}
+
+input[type="text"]:focus, textarea:focus {
+  border-color: #6FAF8F;
+  background: #1C1C1A;
+  box-shadow: 0 0 0 3px rgba(111, 175, 143, 0.1); 
 }
 
 .desc-field { 
@@ -243,4 +251,63 @@ input[type="text"], textarea {
 
 .admin-skill-icons img:hover {
   opacity: 1;
+}
+
+/* =========================
+   ANALYTIC PAGE section
+========================= */
+.analytics-section {
+  margin-top: 20px;
+  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pill-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 12px;
+  max-width: 800px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-pill {
+  background: #1C1C1A;
+  border: 1px solid #2E2E2C;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.3s;
+}
+
+.stat-pill:hover {
+  border-color: #6FAF8F;
+  transform: scaleX(1.01);
+  transform: translateY(-1px);
+
+}
+
+.stat-pill .date {
+  color: #A9A9A9;
+  font-size: 0.9rem;
+}
+
+.stat-pill .count {
+  color: #6FAF8F;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  margin-left: 10px;
+}
+
+
+
+.no-data {
+  text-align: center;
+  color: #7A7977;
+  font-style: italic;
+  padding: 20px;
 }

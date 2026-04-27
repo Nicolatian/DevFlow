@@ -15,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProjectDetail implements OnInit {
   project: any;
+  isAdmin: boolean = false;
   commitDays: string[] = [];
   newTask = { ideas: '', doing: '', review: '' };
   yearSquares: number[] = Array.from({ length: 365 }, (_, i) => i);
@@ -28,6 +29,7 @@ export class ProjectDetail implements OnInit {
   ) {}
 
  ngOnInit(): void {
+    this.isAdmin = !!localStorage.getItem('token'); // check if admin 
     this.commitDays = [];
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -35,6 +37,14 @@ export class ProjectDetail implements OnInit {
         next: (data: any) => {
           this.project = data;
           const repoPath = `Nicolatian/${this.project.repoName}`; 
+
+          this.projectService.incrementClick(id).subscribe({
+          next: (updatedProject) => {
+            this.project.clicks = updatedProject.clicks; // Ajax updates the UI live
+            console.log('Ajax Success: View count++');
+          },
+          error: (err) => console.error('Ajax failed:', err)
+        });
 
           // 1. PHP/MySQL: Track the click
           this.http.post('http://localhost/project_devflow/track.php', { projectId: id })
@@ -110,6 +120,7 @@ export class ProjectDetail implements OnInit {
 
   // --- Kanban Task Logic ---
   drop(event: CdkDragDrop<string[]>, _col: string) {
+    if (!this.isAdmin) return;
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -124,6 +135,7 @@ export class ProjectDetail implements OnInit {
   }
 
   addTask(col: 'ideas' | 'doing' | 'review') {
+    if (!this.isAdmin) return;
     const text = this.newTask[col].trim();
     if (text) {
       this.project.tasks[col].push(text);
@@ -133,11 +145,13 @@ export class ProjectDetail implements OnInit {
   }
 
   deleteTask(col: 'ideas' | 'doing' | 'review', index: number) {
+    if (!this.isAdmin) return;
     this.project.tasks[col].splice(index, 1);
     this.save();
   }
 
   private save() {
+    if (!this.isAdmin) return;
     this.projectService.updateProject(this.project._id, { tasks: this.project.tasks }).subscribe();
   }
 

@@ -67,21 +67,15 @@
           <span class="col-title"><span class="col-dot"></span> Ideas</span>
           <span class="col-count">{{ project.tasks?.ideas?.length || 0 }}</span>
         </div>
-        
-        <div 
-          cdkDropList 
-          [cdkDropListData]="project.tasks.ideas" 
-          class="task-list" 
-          (cdkDropListDropped)="drop($event, 'ideas')">
+        <div cdkDropList [cdkDropListData]="project.tasks.ideas" class="task-list" (cdkDropListDropped)="drop($event, 'ideas')">
           @for (task of project.tasks.ideas; track task; let i = $index) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag [cdkDragDisabled]="!isAdmin">
               <span class="task-text">{{ task }}</span>
-              <button class="delete-task" (click)="deleteTask('ideas', i)">×</button>
+              <button *ngIf="isAdmin" class="delete-task" (click)="deleteTask('ideas', i)">×</button>
             </div>
           }
         </div>
-
-        <div class="add-task-row">
+        <div class="add-task-row" *ngIf="isAdmin">
           <input class="add-task-input" [(ngModel)]="newTask.ideas" placeholder="New idea..." (keyup.enter)="addTask('ideas')" />
           <button class="add-task-btn" (click)="addTask('ideas')">+</button>
         </div>
@@ -92,21 +86,15 @@
           <span class="col-title"><span class="col-dot"></span> In Progress</span>
           <span class="col-count">{{ project.tasks?.doing?.length || 0 }}</span>
         </div>
-        
-        <div 
-          cdkDropList 
-          [cdkDropListData]="project.tasks.doing" 
-          class="task-list" 
-          (cdkDropListDropped)="drop($event, 'doing')">
+        <div cdkDropList [cdkDropListData]="project.tasks.doing" class="task-list" (cdkDropListDropped)="drop($event, 'doing')">
           @for (task of project.tasks.doing; track task; let i = $index) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag [cdkDragDisabled]="!isAdmin">
               <span class="task-text">{{ task }}</span>
-              <button class="delete-task" (click)="deleteTask('doing', i)">×</button>
+              <button *ngIf="isAdmin" class="delete-task" (click)="deleteTask('doing', i)">×</button>
             </div>
           }
         </div>
-
-        <div class="add-task-row">
+        <div class="add-task-row" *ngIf="isAdmin">
           <input class="add-task-input" [(ngModel)]="newTask.doing" placeholder="In progress..." (keyup.enter)="addTask('doing')" />
           <button class="add-task-btn" (click)="addTask('doing')">+</button>
         </div>
@@ -117,28 +105,21 @@
           <span class="col-title"><span class="col-dot"></span> Complete</span>
           <span class="col-count">{{ project.tasks?.review?.length || 0 }}</span>
         </div>
-
-        <div cdkDropList
-          [cdkDropListData]="project.tasks.review"
-          class="task-list"
-          (cdkDropListDropped)="drop($event, 'review')">
+        <div cdkDropList [cdkDropListData]="project.tasks.review" class="task-list" (cdkDropListDropped)="drop($event, 'review')">
           @for (task of project.tasks.review; track task; let i = $index) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag [cdkDragDisabled]="!isAdmin">
               <span class="task-text">{{ task }}</span>
-              <button class="delete-task" (click)="deleteTask('review', i)">×</button>
+              <button *ngIf="isAdmin" class="delete-task" (click)="deleteTask('review', i)">×</button>
             </div>
           }
         </div>
-
-        <div class="add-task-row">
+        <div class="add-task-row" *ngIf="isAdmin">
           <input class="add-task-input" [(ngModel)]="newTask.review" placeholder="Done..." (keyup.enter)="addTask('review')" />
           <button class="add-task-btn" (click)="addTask('review')">+</button>
         </div>
       </div>
 
-    </div>
-
-    <div class="github-history">
+    </div> <div class="github-history">
       <div class="history-header">
         <h3>Recent Activity</h3>
         <span class="year-label">Last 365 Days</span>
@@ -149,21 +130,21 @@
           <span></span> <span>Mon</span>
           <span></span> <span>Wed</span>
           <span></span> <span>Fri</span>
-          <span></span> </div>
+          <span></span> 
+        </div>
 
         <div class="grid-and-months">
           <div class="month-labels">
-            <span *ngFor="let month of monthLabels" 
-                  [style.grid-column]="month.col">
+            <span *ngFor="let month of monthLabels" [style.grid-column]="month.col">
               {{ month.name }}
             </span>
           </div>
 
           <div class="github-grid">
             <div *ngFor="let i of yearSquares" 
-                  class="commit-square" 
-                  [attr.data-level]="getCommitLevel(i)"
-                  [title]="getDateFromIndex(i) + ': ' + countCommits(getDateFromIndex(i)) + ' commits'">
+                 class="commit-square" 
+                 [attr.data-level]="getCommitLevel(i)"
+                 [title]="getDateFromIndex(i) + ': ' + countCommits(getDateFromIndex(i)) + ' commits'">
             </div>
           </div>
         </div>
@@ -171,4 +152,4 @@
     </div>
 
   </section>
-</div>
+ </div> 

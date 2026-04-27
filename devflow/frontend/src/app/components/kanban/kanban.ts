@@ -17,19 +17,49 @@ export class KanbanComponent implements OnInit {
   editingProject: any = {};
   skillsString: string = '';
   activityData: any[] = [];
+  isUploading: boolean = false;
+
+  private cloudName = "dpxd9sp8e";
+  private uploadPreset = "DevFlowImages";
 
   loadActivity() {
-    this.http.get<any[]>('http://localhost/your-path/get_activity.php').subscribe(data => {
+    this.http.get<any[]>('http://localhost/project_devflow/get_activity.php').subscribe(data => {
     this.activityData = data;
     });
   }
 
 
-  constructor(private projectService: ProjectService, private http: HttpClient) {}
+  constructor(private projectService: ProjectService, private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.loadProjects();
     this.loadActivity();
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    console.log("Attempting upload to:", this.cloudName);
+    console.log("Using Preset:", this.uploadPreset);
+
+    this.isUploading = true;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', this.uploadPreset);
+
+    this.http.post(`https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`, formData)
+      .subscribe({
+        next: (res: any) => {
+          this.editingProject.imageUrl = res.secure_url;
+          this.isUploading = false;
+        },
+        error: (err) => {
+          console.error('Upload failed:', err);
+          this.isUploading = false;
+          alert('Image upload failed. Check Cloudinary settings.');
+        }
+      });
   }
 
   loadProjects() {
@@ -42,33 +72,22 @@ export class KanbanComponent implements OnInit {
  
   submitProject(event: Event, formValue: any) {
     event.preventDefault();
-    
-    // Convert the string into an array for the database
-    const skillsArray = this.skillsString
-      ? this.skillsString.split(',').map(s => s.trim()).filter(s => s !== '')
-      : [];
+    const skillsArray = this.skillsString ? this.skillsString.split(',').map(s => s.trim()) : [];
 
     const projectData = {
-      ...formValue, //(All the variables)
-      techStack: skillsArray, // Make sure your backend/service expects this name
-      clicks: this.editingProject?.clicks || 0
+      ...this.editingProject,
+      techStack: skillsArray
     };
 
     if (this.editingProject?._id) {
-      this.projectService.updateProject(this.editingProject._id, projectData).subscribe({
-        next: () => {
-          this.loadProjects();
-          this.cancelEdit();
-          alert('Project updated!');
-        }
+      this.projectService.updateProject(this.editingProject._id, projectData).subscribe(() => {
+        this.loadProjects();
+        this.cancelEdit();
       });
     } else {
-      this.projectService.addProject(projectData).subscribe({
-        next: () => {
-          this.loadProjects();
-          this.cancelEdit();
-          alert('Project created!');
-        }
+      this.projectService.addProject(projectData).subscribe(() => {
+        this.loadProjects();
+        this.cancelEdit();
       });
     }
   }

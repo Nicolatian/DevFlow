@@ -294,6 +294,15 @@
   padding: 10px;
   border-radius: 8px;
   color: white;
+  outline: none;           
+  transition: all 0.3s ease;
+}
+
+/* The "Sleek Effect" on click */
+.add-task-input:focus {
+  border-color: #6FAF8F;
+  background: #1C1C1A;
+  box-shadow: 0 0 0 3px rgba(111, 175, 143, 0.1);
 }
 
 .add-task-btn {
