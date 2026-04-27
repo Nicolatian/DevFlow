@@ -30,17 +30,27 @@
           <label>Project Title</label>
           <input type="text" [(ngModel)]="editingProject.title" name="title" required />
         </div>
-        
+
         <div class="field-group">
-          <label>Project Thumbnail</label>
-          <div class="upload-box" style="display: flex; gap: 10px;">
-            <input type="text" [(ngModel)]="editingProject.imageUrl" name="imageUrl" placeholder="Cloud URL..." readonly style="flex: 1;"/>
-            <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
-            <button type="button" (click)="fileInput.click()" class="upload-btn">
-              {{ isUploading ? '...' : 'Upload' }}
-            </button>
-          </div>
+          <label class="field-label">Project Thumbnail</label>
+          <div class="upload-wrapper">
+            <input type="text" 
+                   [(ngModel)]="editingProject.imageUrl" 
+                   name="imageUrl" 
+                 placeholder="Cloud URL..." 
+                 readonly 
+                 class="upload-path-input"/>
+    
+          <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;">
+    
+          <button type="button" 
+                  (click)="fileInput.click()" 
+                  class="upload-btn"
+                  [class.uploading]="isUploading">
+            <span class="btn-text">{{ isUploading ? 'Uploading...' : 'Upload' }}</span>
+          </button>
         </div>
+      </div>
       </div>
 
       <div class="field-row three">
